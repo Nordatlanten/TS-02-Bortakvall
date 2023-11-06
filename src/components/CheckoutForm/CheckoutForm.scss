@@ -1,0 +1,28 @@
+.checkout-form{
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  form{
+    border-top: dotted 2px #ccc;
+    margin-top: 24px;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .button-panel{
+  justify-content: flex-start;
+  gap: 24px;
+  }
+}
+
+.item-list-checkout{
+  .item-header{
+    font-weight: unset;
+  }
+  img{
+    max-width: 50px;
+  }
+}

@@ -1,7 +1,7 @@
 import './BasketOffCanvas.scss'
 import { useDispatch } from 'react-redux'
 import { AppDispatch, useAppSelector } from '../../redux/store'
-import { updateBasket, hideBasket, addToBasket } from '../../redux/features/basketSlice';
+import { updateBasket, hideBasket, addToBasket, toggleReadyForCheckout, emptyBasket } from '../../redux/features/basketSlice';
 import { Button, Offcanvas } from 'react-bootstrap';
 import { Candy } from '../../types/api.types';
 import { groupBy, checkBasketForItem } from '../../utils/basketFunctions';
@@ -11,7 +11,6 @@ function BasketOffcanvas () {
   const dispatch = useDispatch<AppDispatch>()
   const basket = useAppSelector((state) => state.persistedReducer.basketReducer.value.basket)
   const showBasket = useAppSelector((state) => state.persistedReducer.basketReducer.value.showBasket)
-
   const groupedBasket = groupBy(basket, i => i.id)
 
   const removeProductFromBasket = (item: Candy) => {
@@ -87,7 +86,11 @@ function BasketOffcanvas () {
           </div>
           <div className='button-panel'>
             <Button variant="secondary" onClick={() => dispatch(hideBasket())}>Fortsätt handla</Button>
-            <Button>Till kassan</Button>
+            <Button onClick={() => dispatch(emptyBasket())} variant="danger">Töm varukorg</Button>
+            <Button onClick={() => {
+              dispatch(toggleReadyForCheckout())
+              dispatch(hideBasket())
+            }}>Till kassan</Button>
           </div>
         </div>
       </>

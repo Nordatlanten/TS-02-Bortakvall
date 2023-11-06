@@ -8,6 +8,7 @@ import { AppDispatch, useAppSelector } from './redux/store'
 import BasketOffcanvas from './components/BasketOffcanvas/BasketOffcanvas'
 import CandyListGrid from './components/CandyListGrid/CandyListGrid';
 import ProductInfoModal from './components/ProductInfoModal/ProductInfoModal';
+import CheckoutForm from './components/CheckoutForm/CheckoutForm';
 
 import { groupBy } from './utils/basketFunctions';
 
@@ -20,18 +21,24 @@ function App() {
   const selectedCandy = useAppSelector((state) => state.persistedReducer.candyDataReducer.value.selectedCandy)
   const basketGroupObject = groupBy(basket,i => i.id)
   const groupedBasket = Object.values(basketGroupObject)
+  const readyForCheckout = useAppSelector((state) => state.persistedReducer.basketReducer.value.readyForCheckout)
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div><h1>Välkommen till Bortakväll</h1></div>
-      <Button 
-        className={"basket-button"}
-        onClick={() => dispatch(toggleDisplayBasket())}>
-          Se varukorg {groupedBasket.length > 0 && <span>({groupedBasket.length})</span>}
-      </Button>
-      <CandyList/>
-      <BasketOffcanvas/>
-      { selectedCandy && <ProductInfoModal product={selectedCandy} /> }
+      {!readyForCheckout && 
+        <>
+          <div><h1>Välkommen till Bortakväll</h1></div>
+          <Button 
+            className={"basket-button"}
+            onClick={() => dispatch(toggleDisplayBasket())}>
+              Se varukorg {groupedBasket.length > 0 && <span>({groupedBasket.length})</span>}
+          </Button>
+          <CandyList/>
+          <BasketOffcanvas/>
+          { selectedCandy && <ProductInfoModal product={selectedCandy} /> }
+        </>
+      }
+      { readyForCheckout && <CheckoutForm/>}
     </QueryClientProvider>
   )
 }

@@ -23,6 +23,36 @@ interface Error {
 
 type TaggedCandy<T> = Tag & {products: T[]} 
 
+export type CheckoutBasketItem = {
+  product_id: number,
+  qty: number,
+  item_price: number,
+  item_total: number
+}
+
+export interface OrderData {
+  id: number
+}
+
+export interface Order {
+  customer_first_name: string,
+	customer_last_name: string,
+	customer_address: string,
+	customer_postcode: string,
+	customer_city: string,
+	customer_email: string,
+	customer_phone: string,
+	order_total: number,
+  order_items: Item[]
+}
+
+export interface Item {
+  product_id: number,
+  qty: number,
+  item_price: number,
+  item_total: number
+}
+
 export interface Candy {
   id: number,
   name: string,

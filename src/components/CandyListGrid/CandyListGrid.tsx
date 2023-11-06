@@ -15,7 +15,7 @@ function CandyListGrid() {
 
   const handleItemAdditionToBasket = (a: Candy) => {
     const entries = checkBasketForItem(a, basket)
-    if (entries.length < a.stock_quantity) {
+    if (entries.length <= a.stock_quantity) {
       dispatch(addToBasket(a))
     }
   }
