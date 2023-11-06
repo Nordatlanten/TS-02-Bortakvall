@@ -1,0 +1,16 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+
+  h1{
+    margin: 24px 0;
+  }
+}
+
+.basket-button{
+  position: fixed;
+  z-index: 1;
+  bottom: 24px;
+  right: 24px;
+}

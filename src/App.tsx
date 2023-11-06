@@ -1,34 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.scss'
+import axios from 'axios'
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+
+import { Response, Candy } from './types/api.types'
+import { Button } from 'react-bootstrap';
+
+import { storeCandyList } from './redux/features/candyDataSlice';
+import { toggleDisplayBasket } from './redux/features/basketSlice'
+import { useDispatch } from 'react-redux'
+import { AppDispatch, useAppSelector } from './redux/store'
+import BasketOffcanvas from './components/BasketOffcanvas/BasketOffcanvas'
+import CandyListGrid from './components/CandyListGrid/CandyListGrid';
+
+import { groupBy } from './utils/basketFunctions';
+
+const queryClient = new QueryClient()
+const API_HOST = 'https://bortakvall.se/api/v2/'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useDispatch<AppDispatch>()
+  const basket = useAppSelector((state) => state.basketReducer.value.basket)
+  const basketGroupObject = groupBy(basket,i => i.id)
+  const groupedBasket = Object.values(basketGroupObject)
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <div><h1>Välkommen till Bortakväll</h1></div>
+      <Button 
+        className={"basket-button"}
+        onClick={() => dispatch(toggleDisplayBasket())}>
+          Se varukorg {groupedBasket.length > 0 && <span>({groupedBasket.length})</span>}
+      </Button>
+      <CandyList/>
+      <BasketOffcanvas/>
+    </QueryClientProvider>
+  )
+}
+
+function CandyList() {
+  const dispatch = useDispatch<AppDispatch>()
+  const {isPending, error } = useQuery({
+    queryKey: ['candyListData'],
+    queryFn: async () => {
+      try {
+        const response = await axios.get<Response<Candy>>(API_HOST + 
+          'products')
+        const data = response.data
+        dispatch(storeCandyList(data))
+        console.log(data)
+        return data
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }) 
+  if (isPending) return 'loading...'
+  if (error) return 'An error has occured: ' + error.message
+  return (
+  <CandyListGrid/>
   )
 }
 
