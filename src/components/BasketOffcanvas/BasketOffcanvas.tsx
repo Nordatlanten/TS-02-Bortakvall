@@ -5,12 +5,12 @@ import { updateBasket, hideBasket, addToBasket } from '../../redux/features/bask
 import { Button, Offcanvas } from 'react-bootstrap';
 import { Candy } from '../../types/api.types';
 import { groupBy, checkBasketForItem } from '../../utils/basketFunctions';
+import { selectCandyForDetailedView } from '../../redux/features/candyDataSlice';
 
 function BasketOffcanvas () {
   const dispatch = useDispatch<AppDispatch>()
-  const basket = useAppSelector((state) => state.basketReducer.value.basket)
-  const showBasket = useAppSelector((state) => state.basketReducer.value.showBasket)
-
+  const basket = useAppSelector((state) => state.persistedReducer.basketReducer.value.basket)
+  const showBasket = useAppSelector((state) => state.persistedReducer.basketReducer.value.showBasket)
 
   const groupedBasket = groupBy(basket, i => i.id)
 
@@ -22,13 +22,11 @@ function BasketOffcanvas () {
   const decreaseProductQuantity = (a: Candy) => {
     const index = basket.indexOf(a)
     let newBasket = [...basket]
-    console.log(index)
     if (index > -1) {
       newBasket.splice(index, 1)
       dispatch(updateBasket(newBasket))
     }
   }
-
 
   const increaseProductQuantity = (a: Candy) => {
     const entries = checkBasketForItem(a, basket)
@@ -40,7 +38,7 @@ function BasketOffcanvas () {
   return(
     <Offcanvas placement="end" style={{maxWidth: '80vw'}} show={showBasket} onHide={() => dispatch(hideBasket())}>
     <Offcanvas.Header closeButton>
-      <Offcanvas.Title>Din varukorg</Offcanvas.Title>
+      <Offcanvas.Title >Din varukorg</Offcanvas.Title>
     </Offcanvas.Header>
     <Offcanvas.Body>
       { Object.values(groupedBasket).length > 0 && 
@@ -53,8 +51,8 @@ function BasketOffcanvas () {
               </div>
               <div className="item-content">
                 <div className="item-header">
-                  <span>{a[0].name}</span>
-                  <span onClick={() => removeProductFromBasket(a[0])}>🗑️</span>
+                  <span className='item-title' onClick={() => dispatch(selectCandyForDetailedView(a[0]))}>{a[0].name}</span>
+                  <span className='item-delete-button' onClick={() => removeProductFromBasket(a[0])}>🗑️</span>
                 </div>
                 <div className="item-price">
                   <span>Pris: {a[0].price} kr</span>
@@ -66,13 +64,14 @@ function BasketOffcanvas () {
                     <span className="amount-in-basket">{a.length}</span>
                     <Button variant="secondary" onClick={() => increaseProductQuantity(a[0])}>+</Button>
                   </div>
-                  <div className="sum">
+                  <div className="item-sum">
                     {a[0].price * a.length} kr
                   </div>
                 </div>
               </div>
           </li>
-        ))}</ul>
+        ))}
+        </ul>
         <div className='checkout-panel'>
           <div className='price-totals'>
             <div className='part-sum'>

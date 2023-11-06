@@ -1,25 +1,23 @@
 import './App.scss'
-import axios from 'axios'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
-
-import { Response, Candy } from './types/api.types'
 import { Button } from 'react-bootstrap';
-
 import { storeCandyList } from './redux/features/candyDataSlice';
 import { toggleDisplayBasket } from './redux/features/basketSlice'
 import { useDispatch } from 'react-redux'
 import { AppDispatch, useAppSelector } from './redux/store'
 import BasketOffcanvas from './components/BasketOffcanvas/BasketOffcanvas'
 import CandyListGrid from './components/CandyListGrid/CandyListGrid';
+import ProductInfoModal from './components/ProductInfoModal/ProductInfoModal';
 
 import { groupBy } from './utils/basketFunctions';
 
 const queryClient = new QueryClient()
-const API_HOST = 'https://bortakvall.se/api/v2/'
+import { getCandyList } from './api/candyRequests';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>()
-  const basket = useAppSelector((state) => state.basketReducer.value.basket)
+  const basket = useAppSelector((state) => state.persistedReducer.basketReducer.value.basket)
+  const selectedCandy = useAppSelector((state) => state.persistedReducer.candyDataReducer.value.selectedCandy)
   const basketGroupObject = groupBy(basket,i => i.id)
   const groupedBasket = Object.values(basketGroupObject)
 
@@ -33,6 +31,7 @@ function App() {
       </Button>
       <CandyList/>
       <BasketOffcanvas/>
+      { selectedCandy && <ProductInfoModal product={selectedCandy} /> }
     </QueryClientProvider>
   )
 }
@@ -42,16 +41,9 @@ function CandyList() {
   const {isPending, error } = useQuery({
     queryKey: ['candyListData'],
     queryFn: async () => {
-      try {
-        const response = await axios.get<Response<Candy>>(API_HOST + 
-          'products')
-        const data = response.data
-        dispatch(storeCandyList(data))
-        console.log(data)
-        return data
-      } catch (error) {
-        console.error(error)
-      }
+      const result = await getCandyList()
+      if(result) dispatch(storeCandyList(result.data))
+      return result?.data
     }
   }) 
   if (isPending) return 'loading...'

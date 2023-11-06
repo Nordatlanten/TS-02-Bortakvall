@@ -1,15 +1,17 @@
+import './CandyListGrid.scss'
 import { AppDispatch, useAppSelector } from "../../redux/store"
-import { Card, Button, Container, Row, Col } from "react-bootstrap"
+import { Card, Button, Container } from "react-bootstrap"
 import { addToBasket } from "../../redux/features/basketSlice"
+import { selectCandyForDetailedView } from "../../redux/features/candyDataSlice"
 import { useDispatch } from "react-redux"
 import { Candy } from "../../types/api.types"
 
 import { checkBasketForItem } from "../../utils/basketFunctions"
 
 function CandyListGrid() {
-  const candyList = useAppSelector((state) => state.candyDataReducer.value.candyList)
+  const candyList = useAppSelector((state) => state.persistedReducer.candyDataReducer.value.candyList)
   const dispatch = useDispatch<AppDispatch>()
-  const basket = useAppSelector((state) => state.basketReducer.value.basket)
+  const basket = useAppSelector((state) => state.persistedReducer.basketReducer.value.basket)
 
   const handleItemAdditionToBasket = (a: Candy) => {
     const entries = checkBasketForItem(a, basket)
@@ -18,16 +20,16 @@ function CandyListGrid() {
     }
   }
 
-
   return (
     <Container>
-      <Row >
-        {candyList && candyList.status === 'success' && candyList.data.map((a, _i) =>
-          <Col key={a.id} xs={6} md={3}>
-            <Card style={{ width: '12rem' }}>
+      <div className='candy-list'>
+        {candyList && candyList.status === 'success' && candyList.data instanceof Array && candyList.data.map((a, _i) =>
+            <Card style={{ width: 'min(12rem, 45%)'}} key={a.id}>
               <Card.Img variant="top" src={'https://bortakvall.se/' + a.images.thumbnail} />
               <Card.Body>
-                <Card.Title style={{ fontSize: '1rem' }}>{a.name}</Card.Title>
+                <Card.Title onClick={() => dispatch(selectCandyForDetailedView(a))}>
+                  {a.name}
+                </Card.Title>
                 { a.stock_status === 'outofstock' &&
                   <Card.Text>
                     Ej i lager
@@ -52,7 +54,7 @@ function CandyListGrid() {
                         <span>{a.stock_quantity} i lager</span> 
                         <br/>
                         I kundvagn: {basket.filter(item => item == a).length}
-                        <Button disabled={true} variant="secondary" onClick={() => { handleItemAdditionToBasket(a) }}>
+                        <Button disabled={true} variant="warning" onClick={() => { handleItemAdditionToBasket(a) }}>
                           Ej tillgänglig
                         </Button>
                       </>
@@ -61,9 +63,8 @@ function CandyListGrid() {
                 }
               </Card.Body>
             </Card>
-          </Col>
         )}
-      </Row>
+      </div>
     </Container>
   )
 }

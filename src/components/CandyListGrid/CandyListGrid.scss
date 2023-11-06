@@ -1,0 +1,23 @@
+.container{
+  display: flex;
+  justify-content: center;
+}
+
+.candy-list{
+  display: flex;
+  flex-wrap: wrap;
+  gap: min(3%, 20px);
+  justify-content: center;
+}
+
+.card-title{
+  cursor: pointer;
+  font-size: 1rem;
+  &:hover{
+    filter: invert(1);
+  }
+}
+
+.card .btn{
+  margin-top: 12px;
+}

@@ -1,0 +1,55 @@
+.product-media{
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  img{
+    max-width: min(500px, 80vw);
+  }
+}
+
+.product-content{
+  padding: min(5%, 36px);
+}
+
+.button-panel{
+  display: flex;
+  gap: 12px;
+}
+
+.category-list{
+  display: flex;
+  gap: 24px;
+}
+.category-list-item{
+  font-size: 1rem;
+}
+
+.category-list-item, .slide-content-title{
+  cursor: pointer;
+  &:hover{
+    filter: invert(1);
+  }
+}
+
+.swiper-wrapper{
+  display: flex;
+}
+
+.swiper-slide{
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+img.slide-media{
+  max-width: 100px;
+}
+
+.slide-content{
+  text-align: center;
+  font-size: 0.8rem;
+
+}

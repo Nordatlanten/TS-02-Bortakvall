@@ -3,19 +3,22 @@ import { Response, Candy } from "../../types/api.types";
 
 type InitialState = {
   value: {
-    candyList: undefined | Response<Candy>
+    candyList: undefined | Response<Candy>,
+    selectedCandy: Candy | null
   }
 }
 
 type CandyListState = {
-  candyList: Response<Candy> | undefined
+  candyList: Response<Candy> | undefined,
+  selectedCandy: Candy | null
 }
 
-type Payload = Response<Candy>
+type ResponsePayload = Response<Candy>
 
 const initialState = {
   value: {
-    candyList: undefined
+    candyList: undefined,
+    selectedCandy: null
   } as CandyListState
 }  as InitialState
 
@@ -23,15 +26,24 @@ export const candyData = createSlice({
   name: 'candyData',
   initialState,
   reducers: {
-    storeCandyList: (_state, action: PayloadAction<Payload>) => {
+    storeCandyList: (state, action: PayloadAction<ResponsePayload>) => {
       return {
         value: {
-          candyList: action.payload
+          candyList: action.payload,
+          selectedCandy: state.value.selectedCandy
+        }
+      }
+    },
+    selectCandyForDetailedView: (state, action: PayloadAction<Candy | null>) => {
+      return {
+        value: {
+          candyList: state.value.candyList,
+          selectedCandy: action.payload
         }
       }
     }
   }
 })
 
-export const { storeCandyList } = candyData.actions
+export const { storeCandyList, selectCandyForDetailedView } = candyData.actions
 export default candyData.reducer

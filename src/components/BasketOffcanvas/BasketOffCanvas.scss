@@ -6,7 +6,7 @@
 
 ul.item-list {
   list-style-type: none;
-  padding: 0;
+  padding: 1rem;
 }
 
 li.item{
@@ -45,6 +45,18 @@ li.item{
   }
 }
 
+.item-title{
+  cursor: pointer;
+  font-size: 1rem;
+  &:hover{
+    filter: invert(1);
+  }
+}
+
+.item-delete-button{
+  cursor: pointer;
+}
+
 .amount-in-basket{
   border: solid 1px #ccc;
   border-radius: 4px;
@@ -67,10 +79,15 @@ li.item{
 }
 
 .checkout-panel{
+  background-color: white;
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 12px;
+  position: sticky;
+  bottom: 0;
+  padding: 1rem;
+  z-index: 2;
 }
 
 .part-sum, .vat, .sum, .button-panel{
@@ -82,4 +99,8 @@ li.item{
 .sum{
   border-top: dotted 2px #ccc;
   margin: 6px 0 12px;
+}
+
+.offcanvas-body{
+  padding: 0 !important;
 }

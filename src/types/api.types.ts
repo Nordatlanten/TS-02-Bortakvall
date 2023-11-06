@@ -4,7 +4,7 @@ export type Response<T extends ResponseData> = SuccessResponse<T> | FailResponse
 
 type SuccessResponse<T> = {
   status: 'success',
-  data: T[]
+  data: T[] | TaggedCandy<T>
 }
 
 type ErrorResponse = {
@@ -21,6 +21,8 @@ interface Error {
   [key: string] : string[]
 }
 
+type TaggedCandy<T> = Tag & {products: T[]} 
+
 export interface Candy {
   id: number,
   name: string,
@@ -29,8 +31,7 @@ export interface Candy {
   images: Images,
   stock_status: 'instock' | 'outofstock',
   stock_quantity: number,
-  tags: Tag[],
-
+  tags?: Tag[],
 }
 
 interface Images {
@@ -44,4 +45,3 @@ interface Tag {
   slug: string
 }
 
-interface Order {}
