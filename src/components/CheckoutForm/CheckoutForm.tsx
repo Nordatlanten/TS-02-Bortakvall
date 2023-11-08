@@ -2,7 +2,7 @@ import './CheckoutForm.scss'
 import { Button, Col, Form, Row } from "react-bootstrap"
 import { AppDispatch, useAppSelector } from "../../redux/store"
 import { useDispatch } from "react-redux"
-import { toggleReadyForCheckout } from "../../redux/features/basketSlice"
+import { emptyBasket, toggleReadyForCheckout } from "../../redux/features/basketSlice"
 import * as Yup from 'yup'
 import * as formik from 'formik'
 import { groupBy } from "../../utils/basketFunctions"
@@ -52,7 +52,7 @@ function CheckoutForm () {
 
   return (
     <>
-      { !orderComplete && 
+      { !orderComplete && basket.length > 0 &&
         <div className='checkout-form'>
           <div>
             <h2>Din order</h2>
@@ -98,6 +98,7 @@ function CheckoutForm () {
               const response = await postOrder(e)
               console.log(response)
               setOrderData(response.data)
+              dispatch(emptyBasket())
               setOrderComplete(true)
             }}
             initialValues={{
@@ -219,12 +220,20 @@ function CheckoutForm () {
               </Form>
             )}
           </Formik>
-        </div>}
-      {orderComplete && orderData && <div>
-        Tack! Din order är klar!
-        Ordernummer: {orderData.id}
-        Ledsen att det inte står mer här. Jag blev klar 2 min innan deadline!
-        </div>}
+        </div>
+      }
+      {!orderComplete && basket.length === 0 && 
+      <p className='empty-order-message'>
+        Din varukorg är tom.
+        <Button onClick={() => dispatch(toggleReadyForCheckout())}>Tillbaka till butik</Button>
+      </p>
+      }
+      {orderComplete && orderData && 
+      <p className='order-completion-message'>
+        <span>Tack! Din order är klar!</span>
+        <span>Ordernummer: {orderData.id}</span>
+        <Button onClick={() => dispatch(toggleReadyForCheckout())}>Handla mera</Button>
+      </p>}
     </>
   )
 }
